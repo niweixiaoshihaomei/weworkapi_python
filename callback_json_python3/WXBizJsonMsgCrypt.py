@@ -190,10 +190,13 @@ class Prpcrypt(object):
         except Exception as e:
             print(e)
             return  ierror.WXBizMsgCrypt_IllegalBuffer,None
-        if  from_receiveid != receiveid:
+
+        # 兼容企业内部智能机器人，企业内部智能机器人解析出来的from_receiveid是''，参考官网：https://developer.work.weixin.qq.com/document/path/101033
+        if  from_receiveid and from_receiveid != receiveid:
             print("receiveid not match", receiveid, from_receiveid)
             return ierror.WXBizMsgCrypt_ValidateCorpid_Error,None
-        return 0,json_content
+        # 转成int类型，企信的消息要求是int类型的，解析出来的字符串返回会报错：echostr校验失败，请您检查是否正确解密并输出明文echostr
+        return 0,int(json_content)
     
     def get_random_str(self):
         """ 随机生成16位字符串
