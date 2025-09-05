@@ -195,8 +195,7 @@ class Prpcrypt(object):
         if  from_receiveid and from_receiveid != receiveid:
             print("receiveid not match", receiveid, from_receiveid)
             return ierror.WXBizMsgCrypt_ValidateCorpid_Error,None
-        # 转成int类型，企信的消息要求是int类型的，解析出来的字符串返回会报错：echostr校验失败，请您检查是否正确解密并输出明文echostr
-        return 0,int(json_content)
+        return 0,json_content
     
     def get_random_str(self):
         """ 随机生成16位字符串
@@ -233,7 +232,8 @@ class WXBizJsonMsgCrypt(object):
             return ierror.WXBizMsgCrypt_ValidateSignature_Error, None
         pc = Prpcrypt(self.key)
         ret,sReplyEchoStr = pc.decrypt(sEchoStr,self.m_sReceiveId)
-        return ret,sReplyEchoStr
+        # 转成int类型，企信的消息要求是int类型的，解析出来的字符串返回会报错：echostr校验失败，请您检查是否正确解密并输出明文echostr
+        return ret,int(sReplyEchoStr)
 	
     def EncryptMsg(self, sReplyMsg, sNonce, timestamp = None):
         #将企业回复用户的消息加密打包
